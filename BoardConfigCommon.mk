@@ -117,6 +117,9 @@ include device/qcom/sepolicy/sepolicy.mk
 BOARD_SEPOLICY_DIRS += \
     device/samsung/trlte-common/sepolicy
 
+# Sensors
+TARGET_NO_SENSOR_PERMISSION_CHECK := true
+
 # Time
 BOARD_USES_QC_TIME_SERVICES := true
 
