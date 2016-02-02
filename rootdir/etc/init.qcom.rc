@@ -1240,7 +1240,7 @@ service qcamerasvr /system/bin/mm-qcamera-daemon
     class main
     user camera
     group camera system inet input graphics radio sdcard_rw sdcard_r media_rw shell log
-    writepid /dev/cpuset/system-bacground/tasks
+    writepid /dev/cpuset/system-background/tasks
 
 service gsiff_daemon /system/bin/gsiff_daemon
     class late_start
