@@ -54,6 +54,9 @@ BOARD_CHARGER_SHOW_PERCENTAGE := true
 BOARD_HARDWARE_CLASS += hardware/samsung/cmhw
 BOARD_HARDWARE_CLASS += device/samsung/trlte-common/cmhw
 
+# Data services
+USE_DEVICE_SPECIFIC_DATASERVICES := true
+
 # Display
 BOARD_EGL_CFG := device/samsung/trlte-common/configs/egl.cfg
 OVERRIDE_RS_DRIVER:= libRSDriver_adreno.so
@@ -95,7 +98,9 @@ TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_BOARD_PLATFORM := apq8084
 TARGET_BOARD_PLATFORM_GPU := qcom-adreno420
 
-# Power HAL not specified, we're using the one in trlte-common instead.
+# Power HAL
+CM_POWERHAL_EXTENSION := qcom
+TARGET_POWERHAL_SET_INTERACTIVE_EXT := $(LOCAL_PATH)/power/power_ext.c
 
 # Qualcomm support
 COMMON_GLOBAL_CFLAGS += -DQCOM_BSP
