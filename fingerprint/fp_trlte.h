@@ -19,19 +19,19 @@
 #include <hardware/hardware.h>
 #include <hardware/fingerprint.h>
 
-#define CALL_BASE 0
+#define CALL_base 0
 
-#define CALL_INITSERVICE 1
-#define CALL_ENROLL 2
+#define CALL_initService 1
+#define CALL_enroll 2
 //userId ,fingerIndex
-#define CALL_CANCEL 3
-#define CALL_REMOVE 4
+#define CALL_cancel 3
+#define CALL_remove 4
 //userId ,fingerIndex
-#define CALL_IDENTIFY 5
+#define CALL_identify 5
 //userId
-#define CALL_GET_ENROLLED_FINGER_LIST  6
+#define CALL_getEnrolledFingerList  6
 //userId
-#define CALL_CLEANUP 7
+#define CALL_cleanup 7
 
 typedef enum worker_state_t {
     STATE_IDLE = 0,

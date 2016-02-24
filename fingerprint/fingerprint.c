@@ -57,7 +57,7 @@ static int sendcommand(vcs_fingerprint_device_t* vdev, uint8_t* command, int num
 }
 
 static int getfingermask(vcs_fingerprint_device_t* vdev) {
-    uint8_t command_getlist[2] = {CALL_GET_ENROLLED_FINGER_LIST, (uint8_t)vdev->active_gid};
+    uint8_t command_getlist[2] = {CALL_getEnrolledFingerList, (uint8_t)vdev->active_gid};
     return sendcommand(vdev, command_getlist, 2);
 }
 
@@ -71,10 +71,9 @@ static int initService(vcs_fingerprint_device_t* vdev) {
             sleep(1);
         }
     }
-    uint8_t command[1] = {CALL_INITSERVICE};
+    uint8_t command[1] = {CALL_initService};
 
     ret = sendcommand(vdev, command, 1);
-    vdev->authenticator_id = getfingermask(vdev);
     vdev->init = true;
     return ret;
 }
@@ -120,7 +119,7 @@ static void send_enroll_notice(vcs_fingerprint_device_t* vdev, int fid, int rema
         ALOGD("Secure user ID is zero (invalid)");
         return;
     }
-
+    
     pthread_mutex_lock(&vdev->lock);
 
     vdev->listener.state = STATE_SCAN;
@@ -190,7 +189,6 @@ static uint64_t fingerprint_get_auth_id(struct fingerprint_device* device) {
     ALOGV("----------------> %s ----------------->", __FUNCTION__);
     uint64_t authenticator_id = 0;
     pthread_mutex_lock(&vdev->lock);
-    vdev->authenticator_id = getfingermask(vdev);
     authenticator_id = vdev->authenticator_id;
     pthread_mutex_unlock(&vdev->lock);
 
@@ -221,7 +219,7 @@ static int fingerprint_authenticate(struct fingerprint_device *device,
 
     vdev->op_id = operation_id;
     vdev->listener.state = STATE_SCAN;
-    uint8_t command[2] = {CALL_IDENTIFY, (uint8_t)vdev->active_gid};
+    uint8_t command[2] = {CALL_identify, (uint8_t)vdev->active_gid};
     ret = sendcommand(vdev, command, 2);
 
     pthread_mutex_unlock(&vdev->lock);
@@ -239,7 +237,7 @@ static int fingerprint_enroll(struct fingerprint_device *device,
     int ret = -EINVAL;
     int fingermask = 0;
     int idx = 1;
-    uint8_t command[3] = {CALL_ENROLL, (uint8_t)vdev->active_gid, 0};
+    uint8_t command[3] = {CALL_enroll, (uint8_t)vdev->active_gid, 0};
 
     checkinit(vdev);
 
@@ -266,11 +264,11 @@ static int fingerprint_enroll(struct fingerprint_device *device,
     vdev->listener.state = STATE_ENROLL;
 
     fingermask = getfingermask(vdev);
-    ALOGI("fingerprint_enroll: fingermask=%d", fingermask);
+    ALOGI("fingerprint_enumerate: fingermask=%d", fingermask);
     for (idx = 1; idx <= MAX_NUM_FINGERS; idx++)
         if (!((fingermask >> idx) & 1))
             break;
-
+    
     command[2] = (uint8_t)idx;
     ret = sendcommand(vdev, command, 3);
 
@@ -281,8 +279,6 @@ static int fingerprint_enroll(struct fingerprint_device *device,
     if (ret == 1) {
         ret = 0;
     }
-
-    vdev->authenticator_id = getfingermask(vdev);
 
     return ret;
 }
@@ -322,7 +318,7 @@ static int fingerprint_cancel(struct fingerprint_device *device) {
     pthread_mutex_lock(&vdev->lock);
     vdev->listener.state = STATE_IDLE;
 
-    uint8_t command[1] = {CALL_CANCEL};
+    uint8_t command[1] = {CALL_cancel};
     ret = sendcommand(vdev, command, 1);
     pthread_mutex_unlock(&vdev->lock);
 
@@ -366,7 +362,7 @@ static int fingerprint_remove(struct fingerprint_device *device,
 
     vcs_fingerprint_device_t* vdev = (vcs_fingerprint_device_t*)device;
 
-    uint8_t command[3] = {CALL_REMOVE, (uint8_t)vdev->active_gid, 0};
+    uint8_t command[3] = {CALL_remove, (uint8_t)vdev->active_gid, 0};
 
     checkinit(vdev);
 
@@ -523,7 +519,7 @@ static int fingerprint_close(hw_device_t* device) {
     pthread_mutex_lock(&vdev->lock);
     // Ask listener thread to exit
     vdev->listener.state = STATE_EXIT;
-    uint8_t command[1] = {CALL_CLEANUP};
+    uint8_t command[1] = {CALL_cleanup};
     sendcommand(vdev, command, 1);
     pthread_mutex_unlock(&vdev->lock);
 
