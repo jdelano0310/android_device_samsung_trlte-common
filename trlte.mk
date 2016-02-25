@@ -126,15 +126,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
    libhealthd.default
 
-# Fingerprint
-PRODUCT_PACKAGES += \
-    fingerprintd \
-    fingerprint.apq8084 \
-    ValidityService
-
-PRODUCT_PROPERTY_OVERRIDES += \
-    fingerprint_enabled=1
-
 # GPS
 PRODUCT_PACKAGES += \
     gps.apq8084
